@@ -19,10 +19,10 @@ Or via unpkg.com:
 
 ```javascript
 // es6 module
-import Transcriber from 'transcriber';
+import Transcriber from '@gkt/transcriber';
 
 // common js module
-// const Transcriber = require('transcriber');
+// const Transcriber = require('@gkt/transcriber');
 
 // script tag
 // const Transcriber = window.Transcriber;
