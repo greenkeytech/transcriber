@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>GK Transcriber</title>
+    <link rel="stylesheet" href="./bootstrap.min.css">
+    <style>
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background-color: #f9f9f9;
+    }
+
+    .container {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      width: 100%;
+    }
+
+    .input-group {
+      margin-top: 16px;
+    }
+
+    .input-group-text {
+      width: 8em;
+    }
+
+    .input-group-prepend {
+    }
+
+    .input-group.partial  {
+      color: #aaa;
+    }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <button id="transcribe" class="btn btn-success">Start recording</button>
+      <div class="input-group input-group-lg">
+        <div class="input-group-prepend">
+          <span class="input-group-text">Quote</span>
+        </div>
+        <input id="quote" class="form-control" type="text" />
+      </div>
+      <div class="input-group input-group-lg">
+        <div class="input-group-prepend">
+          <span class="input-group-text">Product Class</span>
+        </div>
+        <input id="product-class" class="form-control"  type="text" />
+      </div>
+      <div class="input-group input-group-lg">
+        <div class="input-group-prepend">
+          <span class="input-group-text">Transcript</span>
+        </div>
+        <input id="transcript" class="form-control"  type="text" />
+      </div>
+
+    <div>
+
+    <script type="text/javascript" src="./Transcriber.js"></script>
+    <script type="text/javascript">
+      // FIXME: Set this URL to your GreenKey host
+      const gkUrl = 'http://localhost:8080';
+
+      const button = document.querySelector('#transcribe');
+      const productClass = document.querySelector('#product-class');
+      const transcript = document.querySelector('#transcript');
+      const quote = document.querySelector('#quote');
+
+      let recording = false;
+
+      // This example initializes the audio stream once at page load and keeps it open forever.
+      // Audio data is only sent to the GK backend between calling the `start` and `stop` methods.
+      (new Transcriber({gkUrl: gkUrl})).init().then(function(transcriber) {
+        button.addEventListener('click', function() {
+          recording = !recording;
+
+          button.classList.toggle('btn-success', !recording);
+          button.classList.toggle('btn-danger', recording);
+
+          if (recording) {
+            button.innerText = 'Stop recording';
+            transcript.value = '';
+            productClass.value = '';
+            quote.value = '';
+            transcriber.start();
+          } else {
+            button.innerText = 'Start recording';
+            transcriber.stop();
+          }
+        });
+
+        transcriber.on(Transcriber.TRANSCRIBER_DATA_RECEIVED, function(t, data) {
+          let segment = data.segments[data.segments.length - 1];
+
+          quote.classList.toggle('partial', !segment.final);
+          productClass.classList.toggle('partial', !segment.final);
+          transcript.classList.toggle('partial', !segment.final);
+
+          quote.value = segment.interpreted_quote ? segment.interpreted_quote.imString : '';
+          productClass.value = segment.interpreted_quote ? segment.interpreted_quote.product_class.label : '';
+          transcript.value = segment.transcript || '';;
+        });
+      }).catch(function(err) {
+        console.error(err);
+        alert(`failed to initialize transcriber: ${err}`);
+      });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,43 @@
+{
+  "name": "@gkt/transcriber",
+  "version": "1.0.0",
+  "description": "A JavaScript library for performing voice transcriptions via GreenKey's backend services",
+  "main": "dist/Transcriber.js",
+  "unpkg": "dist/Transcriber.js",
+  "scripts": {
+    "test": "jest",
+    "build": "webpack --mode production",
+    "version": "node -pe \"require('./package.json').version\"",
+    "prepare": "npm run test && npm run build",
+    "postpublish": "git tag v$(npm --loglevel silent run version) && git push --tags"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/greenkeytech/microphone.git"
+  },
+  "author": "GreenKey Technologies",
+  "license": "Apache-2.0",
+  "devDependencies": {
+    "@babel/core": "^7.5.5",
+    "@babel/plugin-transform-runtime": "^7.5.5",
+    "@babel/preset-env": "^7.5.5",
+    "@babel/runtime": "^7.5.5",
+    "babel-jest": "^24.9.0",
+    "babel-loader": "^8.0.6",
+    "jest": "^24.9.0",
+    "jest-cli": "^24.9.0",
+    "regenerator-runtime": "^0.13.3",
+    "webpack": "^4.39.2",
+    "webpack-cli": "^3.3.7"
+  },
+  "dependencies": {
+    "core-js": "^3.2.1",
+    "uuid": "^3.3.3",
+    "@gkt/microphone": "^1.0.1"
+  },
+  "jest": {
+    "transform": {
+      "^.+\\.js$": "babel-jest"
+    }
+  }
+}
