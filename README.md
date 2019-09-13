@@ -89,3 +89,12 @@ This library uses the [MediaDevices.getUserMedia()](https://developer.mozilla.or
 API for gaining access to the user's microphone hardware. This API is only available in secure
 contexts, so your application must be served over HTTPS in order for it to work.
 
+## Publishing
+
+To publish a new version, update the `version` field in the `package.json` file and run:
+
+```
+$ npm publish --access public
+```
+
+This will automatically apply a git tag matching the version and push it.
