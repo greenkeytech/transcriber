@@ -1,7 +1,7 @@
 import 'core-js';
 import EventEmitter from 'events';
 import uuid from 'uuid/v4';
-import Microphone from 'microphone';
+import Microphone from '@gkt/microphone';
 
 class Transcriber extends EventEmitter {
   constructor({

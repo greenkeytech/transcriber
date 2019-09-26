@@ -33,7 +33,7 @@
   "dependencies": {
     "core-js": "^3.2.1",
     "uuid": "^3.3.3",
-    "@gkt/microphone": "^1.0.1"
+    "@gkt/microphone": "^1.0.2"
   },
   "jest": {
     "transform": {
