@@ -1,6 +1,6 @@
 {
   "name": "@gkt/transcriber",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "A JavaScript library for performing voice transcriptions via GreenKey's backend services",
   "main": "dist/Transcriber.js",
   "unpkg": "dist/Transcriber.js",
