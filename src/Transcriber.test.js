@@ -81,14 +81,6 @@ describe('#init', () => {
   });
 });
 
-describe('#setInterpreter', () => {
-  it('sets the interpreter prop', () => {
-    expect(transcriber.interpreter).toBe('auto');
-    transcriber.setInterpreter('foo');
-    expect(transcriber.interpreter).toBe('foo');
-  });
-});
-
 describe('#start', () => {
   describe('when not READY', () => {
     it('throws an exception', () => {

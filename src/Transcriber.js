@@ -10,7 +10,6 @@ class Transcriber extends EventEmitter {
     webSocket = window.WebSocket,
     audioContext = window.AudioContext || window.webkitAudioContext,
     microphone = Microphone,
-    interpreter = 'auto',
     maxFinalWait = 5000,
   } = {}) {
     super();
@@ -21,7 +20,6 @@ class Transcriber extends EventEmitter {
     this.WebSocket = webSocket;
     this.AudioContext = audioContext;
     this.Microphone = microphone;
-    this.interpreter = interpreter;
     this.maxFinalWait = maxFinalWait;
     this.state = UNINITIALIZED;
   }
@@ -54,11 +52,6 @@ class Transcriber extends EventEmitter {
       });
 
     return this._initPromise;
-  }
-
-  setInterpreter(interpreter) {
-    this.interpreter = interpreter;
-    return this;
   }
 
   start() {
@@ -150,7 +143,7 @@ class Transcriber extends EventEmitter {
 
   _openAudioSocket(sessionId) {
     return new Promise((resolve, reject) => {
-      const path = `${this.gkUrl}/audio/${sessionId}?interpreters=${this.interpreter}`;
+      const path = `${this.gkUrl}/audio/${sessionId}`;
       const socket = new this.WebSocket(this._webSocketUrl(path));
       socket.onopen = () => resolve(socket);
       socket.onerror = e => reject(e);
