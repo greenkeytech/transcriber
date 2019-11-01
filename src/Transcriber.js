@@ -1,4 +1,5 @@
 import 'core-js';
+import querystring from 'querystring';
 import EventEmitter from 'events';
 import uuid from 'uuid/v4';
 import Microphone from '@gkt/microphone';
@@ -11,6 +12,8 @@ class Transcriber extends EventEmitter {
     audioContext = window.AudioContext || window.webkitAudioContext,
     microphone = Microphone,
     maxFinalWait = 5000,
+    middlewareConfig = {},
+    memo = null,
   } = {}) {
     super();
     this.gkUrl = gkUrl;
@@ -22,6 +25,8 @@ class Transcriber extends EventEmitter {
     this.Microphone = microphone;
     this.maxFinalWait = maxFinalWait;
     this.state = UNINITIALIZED;
+    this.middlewareConfig = middlewareConfig;
+    this.memo = memo;
   }
 
   init() {
@@ -143,7 +148,15 @@ class Transcriber extends EventEmitter {
 
   _openAudioSocket(sessionId) {
     return new Promise((resolve, reject) => {
-      const path = `${this.gkUrl}/audio/${sessionId}`;
+      const params = {
+        middleware_config: encodeURIComponent(JSON.stringify(this.middlewareConfig))
+      };
+
+      if (this.memo) {
+        params.memo = encodeURIComponent(this.memo);
+      }
+
+      const path = `${this.gkUrl}/audio/${sessionId}?${querystring.stringify(params)}`;
       const socket = new this.WebSocket(this._webSocketUrl(path));
       socket.onopen = () => resolve(socket);
       socket.onerror = e => reject(e);
