@@ -12,12 +12,16 @@ let defaultOpts;
 let transcriber;
 
 beforeEach(() => {
+  MockWebSocket.clearConnections();
+
   defaultOpts = {
     getUserMedia,
     audioContext: MockAudioContext,
     webSocket: MockWebSocket,
     microphone: MockMicrophone,
     maxFinalWait: 0,
+    middlewareConfig: {discovery: {foo: 1}},
+    memo: 'hello world',
   };
 
   transcriber = new Transcriber(defaultOpts);
@@ -81,14 +85,6 @@ describe('#init', () => {
   });
 });
 
-describe('#setInterpreter', () => {
-  it('sets the interpreter prop', () => {
-    expect(transcriber.interpreter).toBe('auto');
-    transcriber.setInterpreter('foo');
-    expect(transcriber.interpreter).toBe('foo');
-  });
-});
-
 describe('#start', () => {
   describe('when not READY', () => {
     it('throws an exception', () => {
@@ -103,6 +99,28 @@ describe('#start', () => {
       await transcriber.init();
       const p = transcriber.start();
       expect(transcriber.state).toEqual(Transcriber.INITIALIZING_RECORDING);
+      await p;
+    });
+
+    it('opens an audio websocket connection', async () => {
+      await transcriber.init();
+
+      const p = transcriber.start();
+      expect(MockWebSocket.connections.length).toBe(2);
+      const url = new URL(MockWebSocket.connections[0]);
+      expect(url.origin).toEqual('ws://audio');
+      expect(url.searchParams.get('middleware_config')).toEqual(encodeURIComponent(JSON.stringify({discovery: {foo: 1}})));
+      expect(url.searchParams.get('memo')).toEqual('hello%20world');
+      await p;
+    });
+
+    it('opens a relay websocket connection', async () => {
+      await transcriber.init();
+
+      const p = transcriber.start();
+      expect(MockWebSocket.connections.length).toBe(2);
+      const url = new URL(MockWebSocket.connections[1]);
+      expect(url.origin).toEqual('ws://relay');
       await p;
     });
 

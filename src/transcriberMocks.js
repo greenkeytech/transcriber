@@ -22,7 +22,14 @@ export class MockAudioContext {
 }
 
 export class MockWebSocket {
-  constructor() {
+  static clearConnections() {
+    this.connections = [];
+  }
+
+  constructor(url) {
+    MockWebSocket.connections = MockWebSocket.connections || [];
+    MockWebSocket.connections.push(url);
+
     setTimeout(() => {
       this.onopen(this);
     });
