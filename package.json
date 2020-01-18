@@ -31,9 +31,10 @@
     "webpack-cli": "^3.3.10"
   },
   "dependencies": {
+    "@gkt/microphone": "^1.0.3",
     "core-js": "^3.2.1",
-    "uuid": "^3.3.3",
-    "@gkt/microphone": "^1.0.3"
+    "querystring": "^0.2.0",
+    "uuid": "^3.3.3"
   },
   "jest": {
     "transform": {
