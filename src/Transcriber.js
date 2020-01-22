@@ -1,6 +1,7 @@
 import 'core-js';
 import EventEmitter from 'events';
 import uuid from 'uuid/v4';
+import querystring from 'querystring';
 import Microphone from '@gkt/microphone';
 
 class Transcriber extends EventEmitter {
@@ -10,8 +11,9 @@ class Transcriber extends EventEmitter {
     webSocket = window.WebSocket,
     audioContext = window.AudioContext || window.webkitAudioContext,
     microphone = Microphone,
-    interpreter = 'auto',
     maxFinalWait = 5000,
+    audioParams = null,
+    relayParams = null,
   } = {}) {
     super();
     this.gkUrl = gkUrl;
@@ -21,9 +23,10 @@ class Transcriber extends EventEmitter {
     this.WebSocket = webSocket;
     this.AudioContext = audioContext;
     this.Microphone = microphone;
-    this.interpreter = interpreter;
     this.maxFinalWait = maxFinalWait;
     this.state = UNINITIALIZED;
+    this.audioParams = audioParams;
+    this.relayParams = relayParams;
   }
 
   init() {
@@ -54,11 +57,6 @@ class Transcriber extends EventEmitter {
       });
 
     return this._initPromise;
-  }
-
-  setInterpreter(interpreter) {
-    this.interpreter = interpreter;
-    return this;
   }
 
   start() {
@@ -150,7 +148,10 @@ class Transcriber extends EventEmitter {
 
   _openAudioSocket(sessionId) {
     return new Promise((resolve, reject) => {
-      const path = `${this.gkUrl}/audio/${sessionId}?interpreters=${this.interpreter}`;
+      let path = `${this.gkUrl}/audio/${sessionId}`;
+      if (this.audioParams) {
+        path = `${path}?${querystring.encode(this.audioParams)}`
+      }
       const socket = new this.WebSocket(this._webSocketUrl(path));
       socket.onopen = () => resolve(socket);
       socket.onerror = e => reject(e);
@@ -159,9 +160,11 @@ class Transcriber extends EventEmitter {
 
   _openRelaySocket(sessionId) {
     return new Promise((resolve, reject) => {
-      const socket = new this.WebSocket(
-        this._webSocketUrl(`${this.gkUrl}/relay/${sessionId}`)
-      );
+      let path = `${this.gkUrl}/relay/${sessionId}`;
+      if (this.relayParams) {
+        path = `${path}?${querystring.encode(this.relayParams)}`
+      }
+      const socket = new this.WebSocket(this._webSocketUrl(path));
       socket.onopen = () => resolve(socket);
       socket.onerror = e => reject(e);
     });
