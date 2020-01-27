@@ -69,8 +69,8 @@ class Transcriber extends EventEmitter {
     this.state = INITIALIZING_RECORDING;
 
     const sessionId = uuid();
-    const socketAudioParams = Object.assign({}, this.audioParams, audioParams);
-    const socketRelayParams = Object.assign({}, this.relayParams, relayParams);
+    const socketAudioParams = {...this.audioParams, ...audioParams};
+    const socketRelayParams = {...this.relayParams, ...relayParams};
 
     return Promise.all([
       this._openAudioSocket(sessionId, socketAudioParams).then(socket => {
