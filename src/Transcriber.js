@@ -61,14 +61,13 @@ class Transcriber extends EventEmitter {
     return this._initPromise;
   }
 
-  start({audioParams = {}, relayParams = {}, sessionId = '' } = {}) {
+  start({audioParams = {}, relayParams = {}, sessionId = uuid() } = {}) {
     if (this.state !== READY) {
       throw new Error('Transcriber#start: not ready');
     }
 
     this.state = INITIALIZING_RECORDING;
 
-    let sessionId = sessionId || uuid();
     const socketAudioParams = {...this.audioParams, ...audioParams};
     const socketRelayParams = {...this.relayParams, ...relayParams};
 
